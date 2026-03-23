@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Classifier IA</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <p class="eyebrow">Setor Financeiro</p>
+        <h1>Classificador Inteligente de Emails</h1>
+        <p>
+          Classifique mensagens em <strong>Produtivo</strong> ou <strong>Improdutivo</strong>
+          e gere uma resposta automática profissional em segundos.
+        </p>
+      </section>
+
+      <section class="card">
+        <form id="emailForm" class="form">
+          <label for="emailText">Texto do email</label>
+          <textarea
+            id="emailText"
+            name="emailText"
+            rows="8"
+            placeholder="Cole aqui o conteúdo do email..."
+          ></textarea>
+
+          <div class="divider" aria-hidden="true">ou</div>
+
+          <label for="emailFile">Upload de arquivo (.txt ou .pdf)</label>
+          <input id="emailFile" name="emailFile" type="file" accept=".txt,.pdf" />
+
+          <p class="hint">
+            Envie apenas uma fonte por vez: texto direto ou arquivo.
+          </p>
+
+          <button id="submitBtn" type="submit">Processar Email</button>
+        </form>
+
+        <div id="loading" class="loading hidden" aria-live="polite">
+          <span class="spinner" aria-hidden="true"></span>
+          Processando email...
+        </div>
+
+        <div id="errorBox" class="error hidden" role="alert"></div>
+
+        <section id="resultBox" class="result hidden" aria-live="polite">
+          <h2>Resultado</h2>
+          <div class="result-row">
+            <span>Categoria</span>
+            <span id="categoryBadge" class="badge">-</span>
+          </div>
+          <div class="result-reply">
+            <h3>Resposta sugerida</h3>
+            <p id="replyText">-</p>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
+
