@@ -1,54 +1,82 @@
 ﻿# Email Classifier com IA
 
-Aplicacao web full-stack para classificar emails como **Produtivo** ou **Improdutivo** e gerar uma resposta automatica profissional com apoio de IA.
+Aplicacao para classificar emails como **Produtivo** ou **Improdutivo** e gerar resposta automatica profissional com IA.
 
-## Stack
-- Backend: Python 3.10+, FastAPI
-- IA: OpenAI Responses API
-- Frontend: HTML, CSS e JavaScript
-- Configuracao: variaveis de ambiente (`.env`)
-
-## Estrutura do Projeto
-```text
-/app
-  /api
-  /services
-  /utils
-  main.py
-/frontend
-  index.html
-  script.js
-  styles.css
-requirements.txt
-README.md
-Implementação_case_pratico
-```
-
-## Pre-requisitos
+## Tecnologias
 - Python 3.10+
-- Conta com chave de API da OpenAI
+- FastAPI
+- OpenAI Responses API
 
-## Setup Inicial (visao geral)
-1. Criar e ativar ambiente virtual.
-2. Instalar dependencias com `pip install -r requirements.txt`.
-3. Criar arquivo `.env` na raiz do projeto com as variaveis necessarias.
-4. Executar a API com Uvicorn.
+## Como rodar localmente
+1. Crie e ative o ambiente virtual.
+2. Instale as dependencias: `pip install -r requirements.txt`
+3. Crie o arquivo `.env` (pode copiar de `.env.example`).
+4. Preencha ao menos `OPENAI_API_KEY` no `.env`.
+5. Em um terminal, inicie a API: `uvicorn app.main:app --reload`
+6. Em outro terminal, suba o frontend estatico: `python -m http.server 5500 --directory frontend`
+7. Acesse:
+   - Frontend: `http://127.0.0.1:5500`
+   - API: `http://127.0.0.1:8000`
+   - Docs Swagger: `http://127.0.0.1:8000/docs`
 
-## Variaveis de Ambiente (base)
-Exemplo inicial de chaves que serao usadas nas proximas etapas:
-
+## Variaveis de ambiente essenciais
 ```env
-OPENAI_API_KEY=sua_chave_aqui
+OPENAI_API_KEY=your_openai_api_key
 OPENAI_MODEL=gpt-4.1-mini
+OPENAI_TIMEOUT_SECONDS=30
+ALLOWED_ORIGINS=*
+MAX_EMAIL_CHARS=12000
+LOG_LEVEL=INFO
 APP_ENV=development
 ```
 
-## Ordem de Entregas
-1. README inicial
-2. Backend FastAPI completo
-3. Frontend
-4. README final enxuto e atualizado
+## Endpoint principal
+`POST /process-email`
 
-## Status
-- Etapa 1: em andamento/concluida nesta entrega
-- Etapas 2, 3 e 4: pendentes
+Entrada:
+- `application/json` com `email_text`
+- ou `multipart/form-data` com `file` (`.txt` ou `.pdf`)
+
+Saida:
+```json
+{
+  "category": "Produtivo",
+  "reply": "resposta automatica profissional"
+}
+```
+
+## Deploy no Render (completo)
+Fluxo recomendado: **2 servicos** no mesmo repositorio.
+
+### 1) Backend (Web Service)
+1. Suba o projeto no GitHub.
+2. No Render, crie `New > Web Service`.
+3. Conecte o repositorio e branch.
+4. Configure:
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+5. Configure variaveis de ambiente do backend:
+   - `OPENAI_API_KEY`
+   - `OPENAI_MODEL` (ex.: `gpt-4.1-mini`)
+   - `OPENAI_TIMEOUT_SECONDS`
+   - `MAX_EMAIL_CHARS`
+   - `LOG_LEVEL`
+   - `APP_ENV=production`
+   - `ALLOWED_ORIGINS` (URL do frontend em producao, ex.: `https://seu-frontend.onrender.com`)
+6. Deploy e valide:
+   - `https://seu-backend.onrender.com/health`
+   - `https://seu-backend.onrender.com/docs`
+
+### 2) Frontend (Static Site)
+1. No Render, crie `New > Static Site`.
+2. Use o mesmo repositorio.
+3. Configure uma destas opcoes:
+   - Opcao A: `Root Directory = frontend`, `Publish Directory = .`, Build vazio
+   - Opcao B: `Root Directory` vazio, `Publish Directory = frontend`, Build vazio
+4. Antes do deploy, ajuste a URL da API no frontend para o backend de producao.
+   - Em `frontend/script.js`, altere para usar sua URL publica de backend no fallback.
+5. Redeploy do frontend e teste o fluxo completo pela URL publica.
+
+### Observacoes importantes
+- O backend precisa escutar `0.0.0.0` e usar `$PORT` no Render.
+- Se der erro de CORS no browser, revise `ALLOWED_ORIGINS` no backend com a URL exata do frontend.
